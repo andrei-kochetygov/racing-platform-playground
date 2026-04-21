@@ -1,3 +1,4 @@
+using FastEndpoints;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,8 @@ public class Program
     {
         var appBuilder = WebApplication.CreateBuilder(args);
         var services = appBuilder.Services;
+
+        services.AddFastEndpoints();
 
         services.AddValidatorsFromAssemblyContaining<Program>();
 
@@ -40,11 +43,11 @@ public class Program
 
         var app = appBuilder.Build();
 
+        app.UseFastEndpoints();
         app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapIdentityApi<User>().WithTags("Identity");
-        app.MapUsersApi().RequireAuthorization().WithTags("Users");
         app.MapSimulatorModelsApi().RequireAuthorization().WithTags("Simulator Models");
 
         app.MapOpenApi();
