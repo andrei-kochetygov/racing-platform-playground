@@ -483,3 +483,23 @@ $RECYCLE.BIN/
 
 # VSCode History Extension
 .history/
+
+# SQLite database
+*.sqlite
+*.sqlite3
+*.db
+
+# SQLite temp / journal files
+*.db-journal
+*.sqlite-journal
+*.sqlite3-journal
+
+# WAL mode
+*.db-wal
+*.sqlite-wal
+*.sqlite3-wal
+
+# Shared memory
+*.db-shm
+*.sqlite-shm
+*.sqlite3-shm
