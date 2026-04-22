@@ -1,24 +1,23 @@
+using FastEndpoints;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Platform.API.Persistence;
 
 namespace Platform.API.Endpoints.SimulatorModels.UpdateSimulatorModel;
 
-public sealed class UpdateSimulatorModelRequestValidator : AbstractValidator<UpdateSimulatorModelCommand>
+public sealed class UpdateSimulatorModelRequestValidator : Validator<UpdateSimulatorModelRequest>
 {
-    private readonly AppDbContext _db;
-
-    public UpdateSimulatorModelRequestValidator(AppDbContext db)
+    public UpdateSimulatorModelRequestValidator()
     {
-        _db = db;
-
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required.")
             .MustAsync(BeUniqueName).WithMessage("Name must be unique.");
     }
 
-    private async Task<bool> BeUniqueName(UpdateSimulatorModelCommand command, string name, CancellationToken cancellationToken)
+    public async Task<bool> BeUniqueName(UpdateSimulatorModelRequest request, string name, CancellationToken cancellationToken)
     {
-        return !await _db.SimulatorModels.AnyAsync(x => x.Id != command.Id && x.Name == name, cancellationToken);
+        using var scope = CreateScope();
+        var db = scope.Resolve<AppDbContext>();
+        return !await db.SimulatorModels.AnyAsync(x => x.Id != request.Id && x.Name == name, cancellationToken);
     }
 }

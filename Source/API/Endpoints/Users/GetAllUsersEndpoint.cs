@@ -2,7 +2,7 @@ using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using Platform.API.Persistence;
 
-namespace Platform.API.Endpoints.Users.GetAllUsers;
+namespace Platform.API.Endpoints.Users;
 
 public class GetAllUsersEndpoint(AppDbContext db) : EndpointWithoutRequest<IReadOnlyList<UserResource>>
 {

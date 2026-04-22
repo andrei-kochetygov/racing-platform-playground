@@ -2,9 +2,8 @@ using FastEndpoints;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Platform.API.Endpoints.SimulatorModels;
-using Platform.API.Endpoints.Users;
 using Platform.API.Models;
+using Platform.API.OpenApi;
 using Platform.API.Persistence;
 using Scalar.AspNetCore;
 
@@ -39,16 +38,16 @@ public class Program
         services.AddAuthorization();
         services.AddOpenApi(options => {
             options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+            options.AddSchemaTransformer<OpenApiSkipPropertyTransformer>();
         });
 
         var app = appBuilder.Build();
 
-        app.UseFastEndpoints();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseFastEndpoints();
 
         app.MapIdentityApi<User>().WithTags("Identity");
-        app.MapSimulatorModelsApi().RequireAuthorization().WithTags("Simulator Models");
 
         app.MapOpenApi();
         app.MapScalarApiReference(

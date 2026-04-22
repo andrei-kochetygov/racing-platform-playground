@@ -1,24 +1,24 @@
+using FastEndpoints;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Platform.API.Persistence;
 
 namespace Platform.API.Endpoints.SimulatorModels.CreateSimulatorModel;
 
-public sealed class CreateSimulatorModelRequestValidator : AbstractValidator<CreateSimulatorModelRequest>
+
+public sealed class CreateSimulatorModelRequestValidator : Validator<CreateSimulatorModelRequest>
 {
-    private readonly AppDbContext _db;
-
-    public CreateSimulatorModelRequestValidator(AppDbContext db)
+    public CreateSimulatorModelRequestValidator()
     {
-        _db = db;
-
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required.")
             .MustAsync(BeUniqueName).WithMessage("Name must be unique.");
     }
 
-    private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
+    public async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
     {
-        return !await _db.SimulatorModels.AnyAsync(x => x.Name == name, cancellationToken);
+        using var scope = CreateScope();
+        var db = scope.Resolve<AppDbContext>();
+        return !await db.SimulatorModels.AnyAsync(x => x.Name == name, cancellationToken);
     }
 }
