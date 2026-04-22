@@ -3,9 +3,9 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Platform.API.Persistence;
 
-namespace Platform.API.Endpoints.SimulatorModels.UpdateSimulatorModel;
+namespace Platform.API.Endpoints.Simulators.UpdateSimulator;
 
-public class UpdateSimulatorModelEndpoint(AppDbContext db) : Endpoint<UpdateSimulatorModelRequest>
+public class UpdateSimulatorEndpoint(AppDbContext db) : Endpoint<UpdateSimulatorRequest>
 {
     public override void Configure()
     {
@@ -13,15 +13,16 @@ public class UpdateSimulatorModelEndpoint(AppDbContext db) : Endpoint<UpdateSimu
         Description(d => d
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound));
-        Group<SimulatorModelEndpointsGroup>();
+        Group<SimulatorEndpointsGroup>();
     }
 
-    public override async Task HandleAsync(UpdateSimulatorModelRequest request, CancellationToken ct)
+    public override async Task HandleAsync(UpdateSimulatorRequest request, CancellationToken ct)
     {
-        var entitiesUpdated = await db.SimulatorModels
+        var entitiesUpdated = await db.Simulators
             .Where(x => x.Id == request.Id)
             .ExecuteUpdateAsync(setters => setters
-                .SetProperty(x => x.Name, request.Name), ct);
+                .SetProperty(x => x.Number, request.Number)
+                .SetProperty(x => x.ModelId, request.ModelId), ct);
 
         if (entitiesUpdated == 0)
         {

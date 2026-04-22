@@ -18,6 +18,11 @@ public class DeleteSimulatorModelEndpoint(AppDbContext db) : EndpointWithoutRequ
     {
         var id = Route<string>("id");
 
+        var inUse = await db.Simulators.AnyAsync(x => x.ModelId == id, ct);
+
+        if (inUse)
+            ThrowError("Cannot delete simulator model because it is in use by one or more simulators.");
+
         await db.SimulatorModels.Where(x => x.Id == id).ExecuteDeleteAsync(ct);
 
         await Send.NoContentAsync(ct);
