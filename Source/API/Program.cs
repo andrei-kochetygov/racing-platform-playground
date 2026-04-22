@@ -1,3 +1,4 @@
+using dotenv.net;
 using FastEndpoints;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
@@ -13,8 +14,23 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        DotEnv.Load();
+
         var appBuilder = WebApplication.CreateBuilder(args);
+        var configuration = appBuilder.Configuration;
         var services = appBuilder.Services;
+
+        services
+            .AddOptions<EmailFromSettings>()
+            .Bind(configuration.GetSection("Email:From"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services
+            .AddOptions<SmtpSettings>()
+            .Bind(configuration.GetSection("Smtp"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.AddFastEndpoints();
 

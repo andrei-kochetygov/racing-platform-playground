@@ -481,7 +481,7 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# VSCode History Extension
+# VSCode history extension
 .history/
 
 # SQLite database
@@ -503,3 +503,6 @@ $RECYCLE.BIN/
 *.db-shm
 *.sqlite-shm
 *.sqlite3-shm
+
+# Docker Compose volumes
+.volumes/

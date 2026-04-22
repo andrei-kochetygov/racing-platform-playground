@@ -1,0 +1,14 @@
+services:
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - ${Smtp__Port:-1025}:1025
+      - 8025:8025
+    environment:
+      - MP_DATABASE=/database/mailpit.db
+      - MP_SMTP_AUTH=${Smtp__Username:-noreply@example.com}:${Smtp__Password:-secret}
+      - MP_SMTP_AUTH_ALLOW_INSECURE=true
+    volumes:
+      - ./.volumes/mailpit/database:/database

@@ -1,31 +1,40 @@
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using MimeKit;
+using MimeKit.Text;
 using Platform.API.Models;
-using System.Net.Mail;
 
 namespace Platform.API;
 
-public class EmailSender : IEmailSender<User>
+public class EmailSender(IOptions<SmtpSettings> smtpSettings, IOptions<EmailFromSettings> emailFromSettings) : IEmailSender<User>
 {
     public async Task SendConfirmationLinkAsync(User user, string email, string confirmationLink)
     {
-        await SendMessageAsync(new MailMessage {
-            From = new MailAddress("no-reply@example.com"),
-            To = { new MailAddress(email) },
+        var message = new MimeMessage()
+        {
             Subject = "Email Confirmation",
-            Body = @$"Please confirm your email by clicking the following link: <a href=""{confirmationLink}"">Confirm Email</a>",
-            IsBodyHtml = true
-        });
+            Body = new TextPart(TextFormat.Html) {
+                Text = @$"Please confirm your email by clicking the following link: <a href=""{confirmationLink}"">Confirm Email</a>"
+            }
+        };
+        message.To.Add(new MailboxAddress(email, email));
+        
+        await SendMessageAsync(message);
     }
 
     public async Task SendPasswordResetCodeAsync(User user, string email, string resetCode)
     {
-        await SendMessageAsync(new MailMessage {
-            From = new MailAddress("no-reply@example.com"),
-            To = { new MailAddress(email) },
+        var message = new MimeMessage()
+        {
             Subject = "Password Reset Code",
-            Body = @$"Your password reset code is: {resetCode}",
-            IsBodyHtml = true
-        });
+            Body = new TextPart(TextFormat.Html) {
+                Text = @$"Your password reset code is: {resetCode}"
+            }
+        };
+        message.To.Add(new MailboxAddress(email, email));
+
+        await SendMessageAsync(message);
     }
 
     public async Task SendPasswordResetLinkAsync(User user, string email, string resetLink)
@@ -33,13 +42,16 @@ public class EmailSender : IEmailSender<User>
         throw new NotImplementedException();
     }
 
-    public async Task SendMessageAsync(MailMessage message)
+    public async Task SendMessageAsync(MimeMessage message)
     {
-        using var client = new SmtpClient {
-            Host = "localhost",
-            Port = 1025,
-        };
+        message.From.Add(new MailboxAddress(emailFromSettings.Value.Name, emailFromSettings.Value.Address));
 
-        await client.SendMailAsync(message);
+        using var client = new SmtpClient();
+
+        await client.ConnectAsync(smtpSettings.Value.Host, smtpSettings.Value.Port);
+        await client.AuthenticateAsync(smtpSettings.Value.Username, smtpSettings.Value.Password);
+
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
     }
 }
