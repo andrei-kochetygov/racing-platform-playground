@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using Platform.API.Models;
+using Platform.API.Settings;
 
 namespace Platform.API;
 

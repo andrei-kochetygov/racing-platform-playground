@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Platform.API;
+namespace Platform.API.Settings;
 
 public class EmailFromSettings
 {

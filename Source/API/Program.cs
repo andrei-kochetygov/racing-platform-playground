@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Platform.API.Models;
 using Platform.API.OpenApi;
 using Platform.API.Persistence;
+using Platform.API.Settings;
 using Scalar.AspNetCore;
 
 namespace Platform.API;
