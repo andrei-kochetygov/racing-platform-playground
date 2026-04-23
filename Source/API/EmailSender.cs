@@ -15,12 +15,13 @@ public class EmailSender(IOptions<SmtpSettings> smtpSettings, IOptions<EmailFrom
         var message = new MimeMessage()
         {
             Subject = "Email Confirmation",
-            Body = new TextPart(TextFormat.Html) {
+            Body = new TextPart(TextFormat.Html)
+            {
                 Text = @$"Please confirm your email by clicking the following link: <a href=""{confirmationLink}"">Confirm Email</a>"
             }
         };
         message.To.Add(new MailboxAddress(email, email));
-        
+
         await SendMessageAsync(message);
     }
 
@@ -29,7 +30,8 @@ public class EmailSender(IOptions<SmtpSettings> smtpSettings, IOptions<EmailFrom
         var message = new MimeMessage()
         {
             Subject = "Password Reset Code",
-            Body = new TextPart(TextFormat.Html) {
+            Body = new TextPart(TextFormat.Html)
+            {
                 Text = @$"Your password reset code is: {resetCode}"
             }
         };

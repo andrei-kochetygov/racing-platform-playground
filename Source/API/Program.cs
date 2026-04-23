@@ -41,7 +41,8 @@ public class Program
         services.AddTransient<IEmailSender<User>, EmailSender>();
 
         services
-            .AddIdentityCore<User>(options => {
+            .AddIdentityCore<User>(options =>
+            {
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = true;
             })
@@ -53,7 +54,8 @@ public class Program
             .AddBearerToken(IdentityConstants.BearerScheme);
 
         services.AddAuthorization();
-        services.AddOpenApi(options => {
+        services.AddOpenApi(options =>
+        {
             options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
             options.AddSchemaTransformer<OpenApiSkipPropertyTransformer>();
         });

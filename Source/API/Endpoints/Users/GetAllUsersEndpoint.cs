@@ -17,7 +17,8 @@ public class GetAllUsersEndpoint(AppDbContext db) : EndpointWithoutRequest<IRead
     public override async Task HandleAsync(CancellationToken ct)
     {
         var users = await db.Users
-            .Select(x => new UserResource {
+            .Select(x => new UserResource
+            {
                 Id = x.Id,
                 Email = x.Email,
             })

@@ -15,10 +15,10 @@ public sealed class OpenApiSkipPropertyTransformer : IOpenApiSchemaTransformer
         {
             var jsonProperty = context.JsonTypeInfo.Properties
                 .FirstOrDefault(p => p.AttributeProvider is PropertyInfo pi && pi == prop);
-            
+
             if (jsonProperty != null)
             {
-                schema.Properties?.Remove(jsonProperty.Name);   
+                schema.Properties?.Remove(jsonProperty.Name);
             }
         }
     }

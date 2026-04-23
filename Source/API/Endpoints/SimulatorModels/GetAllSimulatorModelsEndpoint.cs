@@ -17,7 +17,8 @@ public class GetAllSimulatorModelsEndpoint(AppDbContext db) : EndpointWithoutReq
     public override async Task HandleAsync(CancellationToken ct)
     {
         var simulatorModels = await db.SimulatorModels
-            .Select(x => new SimulatorModelResource {
+            .Select(x => new SimulatorModelResource
+            {
                 Id = x.Id,
                 Name = x.Name,
             })

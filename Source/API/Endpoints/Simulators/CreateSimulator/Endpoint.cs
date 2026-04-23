@@ -25,7 +25,7 @@ public class CreateSimulatorEndpoint(AppDbContext db) : Endpoint<CreateSimulator
         var simulator = await db.Simulators.AddAsync(new Simulator
         {
             Id = Guid.NewGuid().ToString(),
-            Number = (byte) request.Number,
+            Number = (byte)request.Number,
             ModelId = request.ModelId,
             Model = simulatorModel,
         }, ct);
