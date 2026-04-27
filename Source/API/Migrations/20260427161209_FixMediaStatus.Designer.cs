@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Platform.API.Persistence;
 
@@ -10,9 +11,11 @@ using Platform.API.Persistence;
 namespace Platform.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260427161209_FixMediaStatus")]
+    partial class FixMediaStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
@@ -308,6 +311,7 @@ namespace Platform.API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AvatarId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
@@ -399,7 +403,9 @@ namespace Platform.API.Migrations
                 {
                     b.HasOne("Platform.API.Models.MediaFile", "Avatar")
                         .WithOne()
-                        .HasForeignKey("Platform.API.Models.UserProfile", "AvatarId");
+                        .HasForeignKey("Platform.API.Models.UserProfile", "AvatarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Platform.API.Models.User", "User")
                         .WithOne("Profile")

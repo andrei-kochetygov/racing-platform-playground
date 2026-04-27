@@ -13,6 +13,9 @@ public class SimulatorConfiguration : IEntityTypeConfiguration<Simulator>
 
         entity.HasKey(e => e.Id);
 
+        entity.Property(x => x.ModelId)
+            .IsRequired();
+
         entity.HasOne(x => x.Model)
             .WithMany()
             .HasForeignKey(x => x.ModelId)

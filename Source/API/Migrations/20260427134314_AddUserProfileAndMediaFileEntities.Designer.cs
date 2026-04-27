@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Platform.API.Persistence;
 
@@ -10,9 +11,11 @@ using Platform.API.Persistence;
 namespace Platform.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260427134314_AddUserProfileAndMediaFileEntities")]
+    partial class AddUserProfileAndMediaFileEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
@@ -176,15 +179,14 @@ namespace Platform.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("FileName")
                         .HasColumnType("TEXT");
 
                     b.Property<long>("Size")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Storage")
                         .IsRequired()
@@ -199,7 +201,7 @@ namespace Platform.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MediaFiles", (string)null);
+                    b.ToTable("MediaFiles");
                 });
 
             modelBuilder.Entity("Platform.API.Models.Simulator", b =>
@@ -324,13 +326,12 @@ namespace Platform.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AvatarId")
-                        .IsUnique();
+                    b.HasIndex("AvatarId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserProfiles", (string)null);
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -398,8 +399,8 @@ namespace Platform.API.Migrations
             modelBuilder.Entity("Platform.API.Models.UserProfile", b =>
                 {
                     b.HasOne("Platform.API.Models.MediaFile", "Avatar")
-                        .WithOne()
-                        .HasForeignKey("Platform.API.Models.UserProfile", "AvatarId");
+                        .WithMany()
+                        .HasForeignKey("AvatarId");
 
                     b.HasOne("Platform.API.Models.User", "User")
                         .WithOne("Profile")

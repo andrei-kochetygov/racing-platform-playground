@@ -17,6 +17,12 @@ public class Program
     {
         DotEnv.Load();
 
+        var contentRoot = Directory.GetCurrentDirectory();
+        var wwwrootPath = Path.Combine(contentRoot, "wwwroot");
+
+        if (!Directory.Exists(wwwrootPath))
+            Directory.CreateDirectory(wwwrootPath);
+
         var appBuilder = WebApplication.CreateBuilder(args);
         var configuration = appBuilder.Configuration;
         var services = appBuilder.Services;
@@ -65,6 +71,7 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseFastEndpoints();
+        app.UseStaticFiles();
 
         app.MapIdentityApi<User>().WithTags("Identity");
 

@@ -8,6 +8,11 @@ namespace Platform.API.Persistence;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<User>(options)
 {
+    public DbSet<MediaFile> MediaFiles
+    {
+        get => Set<MediaFile>();
+    }
+
     public DbSet<SimulatorModel> SimulatorModels
     {
         get => Set<SimulatorModel>();
@@ -16,6 +21,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Simulator> Simulators
     {
         get => Set<Simulator>();
+    }
+
+    public DbSet<UserProfile> UserProfiles
+    {
+        get => Set<UserProfile>();
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -32,5 +42,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
         builder.ApplyConfiguration(new SimulatorModelConfiguration());
         builder.ApplyConfiguration(new SimulatorConfiguration());
+        builder.ApplyConfiguration(new UserProfileConfiguration());
+        builder.ApplyConfiguration(new MediaFileConfiguration());
     }
 }
