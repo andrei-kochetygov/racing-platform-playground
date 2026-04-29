@@ -4,7 +4,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Platform.API.Endpoints.Users.UpdateUserProfile;
 using Platform.API.Models;
 using Platform.API.OpenApi;
 using Platform.API.Persistence;
@@ -15,7 +14,7 @@ namespace Platform.API;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         DotEnv.Load();
 
@@ -54,6 +53,7 @@ public class Program
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = true;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddApiEndpoints();
 
@@ -92,7 +92,8 @@ public class Program
         );
 
         app.ApplyMigrations();
+        await app.SeedAsync();
 
-        app.Run();
+        await app.RunAsync();
     }
 }
