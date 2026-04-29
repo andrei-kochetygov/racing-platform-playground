@@ -2,10 +2,11 @@ using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using Platform.API.Persistence;
 using Platform.API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Platform.API.Endpoints.Users.UpdateUserProfile;
 
-public class UpdateUserProfileEndpoint(AppDbContext db) : Endpoint<UpdateUserProfileRequest>
+public class UpdateUserProfileEndpoint(AppDbContext db, IAuthorizationService authorizationService) : Endpoint<UpdateUserProfileRequest>
 {
     public override void Configure()
     {
@@ -26,16 +27,6 @@ public class UpdateUserProfileEndpoint(AppDbContext db) : Endpoint<UpdateUserPro
             return;
         }
 
-        var currentUserId = (User.FindFirst("sub")?.Value
-            ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-            ?? throw new UnauthorizedAccessException("User is not authenticated");
-
-        if (userId != currentUserId)
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
-
         var userExists = await db.Users.AnyAsync(x => x.Id == userId, ct);
 
         if (!userExists)
@@ -51,6 +42,14 @@ public class UpdateUserProfileEndpoint(AppDbContext db) : Endpoint<UpdateUserPro
             FirstName = request.FirstName,
             LastName = request.LastName,
         };
+
+        var authorization = await authorizationService.AuthorizeAsync(User, profile, nameof(UpdateAccessPolicy));
+
+        if (!authorization.Succeeded)
+        {
+            await Send.NotFoundAsync(ct);
+            return;
+        }
 
         var entiresAffected = await db.UserProfiles.Where(x => x.UserId == userId).ExecuteUpdateAsync(p => p
                 .SetProperty(x => x.FirstName, request.FirstName)

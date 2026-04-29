@@ -1,11 +1,12 @@
 using FastEndpoints;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Platform.API.Models;
 using Platform.API.Persistence;
 
 namespace Platform.API.Endpoints.Users.UploadUserAvatar;
 
-public class UploadUserAvatarEndpoint(AppDbContext db, IWebHostEnvironment env) : Endpoint<UploadUserAvatarRequest>
+public class UploadUserAvatarEndpoint(AppDbContext db, IWebHostEnvironment env, IAuthorizationService authorizationService) : Endpoint<UploadUserAvatarRequest>
 {
     public override void Configure()
     {
@@ -22,6 +23,16 @@ public class UploadUserAvatarEndpoint(AppDbContext db, IWebHostEnvironment env) 
         var userId = Route<string>("id");
 
         if (userId is null)
+        {
+            await Send.NotFoundAsync(ct);
+            return;
+        }
+
+        var profile = await db.UserProfiles.FirstAsync(x => x.UserId == userId, ct);
+
+        var authorization = await authorizationService.AuthorizeAsync(User, profile, nameof(UpdateAccessPolicy));
+
+        if (!authorization.Succeeded)
         {
             await Send.NotFoundAsync(ct);
             return;
@@ -59,10 +70,6 @@ public class UploadUserAvatarEndpoint(AppDbContext db, IWebHostEnvironment env) 
             Status = "pending",
             CreatedAt = DateTime.UtcNow
         };
-
-        var profile = await db.UserProfiles
-            .FirstAsync(x => x.UserId == userId, ct)
-            ?? throw new Exception("User profile not found");
 
         await using var creationTransaction = await db.Database.BeginTransactionAsync(ct);
 

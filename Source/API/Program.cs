@@ -1,8 +1,10 @@
 using dotenv.net;
 using FastEndpoints;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Platform.API.Endpoints.Users.UpdateUserProfile;
 using Platform.API.Models;
 using Platform.API.OpenApi;
 using Platform.API.Persistence;
@@ -59,7 +61,13 @@ public class Program
             .AddAuthentication(IdentityConstants.BearerScheme)
             .AddBearerToken(IdentityConstants.BearerScheme);
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddUpdateAccessPolicy();
+        });
+
+        services.AddSingleton<IAuthorizationHandler, UpdateUserProfileAccessHandler>();
+
         services.AddOpenApi(options =>
         {
             options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
