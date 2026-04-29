@@ -38,16 +38,6 @@ public class UploadUserAvatarEndpoint(AppDbContext db, IWebHostEnvironment env, 
             return;
         }
 
-        var currentUserId = (User.FindFirst("sub")?.Value
-            ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-            ?? throw new UnauthorizedAccessException("User is not authenticated");
-
-        if (userId != currentUserId)
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
-
         var file = request.Avatar;
 
         var mediaId = Guid.NewGuid().ToString();
