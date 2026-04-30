@@ -6,10 +6,11 @@ public class IdentityEndpointsGroup : Group
 {
     public IdentityEndpointsGroup()
     {
-        Configure("identity", ep =>
+        Configure("", ep =>
         {
             ep.Description(x => x
-                .WithTags("IdentityOverride"));
+                .WithOrder(-1)
+                .WithTags("Identity"));
         });
     }
 }

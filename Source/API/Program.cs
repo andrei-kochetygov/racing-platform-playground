@@ -78,10 +78,10 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseFastEndpoints();
-        app.UseStaticFiles();
 
         app.MapIdentityApi<User>().WithTags("Identity");
+        app.UseFastEndpoints();
+        app.UseStaticFiles();
 
         app.MapOpenApi();
         app.MapScalarApiReference(
